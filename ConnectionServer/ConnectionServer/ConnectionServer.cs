@@ -18,7 +18,7 @@ namespace ConnectionServer
 
         public ConnectionServer()
         {
-            Settings.Save("Settings.json");
+            Settings.Save("/data/Settings.json");
             Logger.SetFile(Settings.LogFile, true);
             router = new Router(Settings.RouterID);
             listener = new TcpSocketListener();

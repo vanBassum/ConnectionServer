@@ -6,7 +6,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["ConnectionServer/ConnectionServer.csproj", "ConnectionServer/"]
-COPY ["../Lib/STDLib/STDLib.csproj", "../Lib/STDLib/"]
+COPY ["Lib/STDLib/STDLib.csproj", "Lib/STDLib/"]
 RUN dotnet restore "ConnectionServer/ConnectionServer.csproj"
 COPY . .
 WORKDIR "/src/ConnectionServer"
