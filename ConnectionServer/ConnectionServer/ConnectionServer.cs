@@ -35,17 +35,17 @@ namespace ConnectionServer
             client.OnBroadcastRecieved += Client_OnBroadcastRecieved;
         }
 
-        private void Client_OnBroadcastRecieved(object sender, Message e)
+        private void Client_OnBroadcastRecieved(object sender, Frame e)
         {
             //throw new NotImplementedException();
         }
 
-        private void Client_OnMessageRecieved(object sender, Message e)
+        private void Client_OnMessageRecieved(object sender, Frame e)
         {
-            switch(e.Payload[0])
+            switch(e.PAY[0])
             {
                 case 0:
-                    Logger.WriteLine(Regex.Escape(Encoding.ASCII.GetString(e.Payload, 1, e.Payload.Length -1)));
+                    Logger.WriteLine(Regex.Escape(Encoding.ASCII.GetString(e.PAY, 1, e.PAY.Length -1)));
                     break;
             }
             
