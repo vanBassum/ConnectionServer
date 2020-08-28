@@ -44,6 +44,7 @@ namespace ConnectionServer
         {
             TCPConnection con = new TCPConnection(e);
             router.AddConnection(con);
+            Console.WriteLine("Client accepted");
         }
     }
 
