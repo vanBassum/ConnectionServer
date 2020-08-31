@@ -1,4 +1,5 @@
-﻿using System;
+﻿using STDLib.Commands;
+using System;
 using System.Linq;
 
 namespace ConnectionServer
@@ -10,11 +11,11 @@ namespace ConnectionServer
 
         static void Main(string[] args)
         {
-            
             ConnectionServer server = new ConnectionServer();
-            
-            string imput = Console.ReadLine();
-            Console.WriteLine("Bye");
+
+            BaseCommand.Do();
+
+
             
         }
 

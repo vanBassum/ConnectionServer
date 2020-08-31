@@ -19,7 +19,7 @@ namespace ConnectionServer
 
         public ConnectionServer()
         {
-            Settings.Load(Settings.defaultSettingsFile, true);
+            Settings.Load(true);
 
             DummyConnection con_ID_Router = new DummyConnection();
             DummyConnection con_Router_ID = new DummyConnection();
@@ -37,7 +37,7 @@ namespace ConnectionServer
 
         ~ConnectionServer()
         {
-            Settings.Save(Settings.defaultSettingsFile);
+            Settings.Save();
         }
 
         private void Listener_OnClientAccept(object sender, TcpSocketClient e)
