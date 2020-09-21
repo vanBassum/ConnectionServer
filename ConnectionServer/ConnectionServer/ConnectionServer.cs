@@ -11,7 +11,7 @@ namespace ConnectionServer
 {
     public class ConnectionServer
     {
-        readonly IDServer iDServer;
+        readonly LeaseServer iDServer;
         readonly Router router;
         readonly TcpSocketListener listener;
 
@@ -25,7 +25,7 @@ namespace ConnectionServer
             DummyConnection con_Router_ID = new DummyConnection();
             DummyConnection.CoupleConnections(con_ID_Router, con_Router_ID);
 
-            iDServer = new IDServer(con_ID_Router);
+            iDServer = new LeaseServer(con_ID_Router);
 
             router = new Router();
             router.AddConnection(con_Router_ID);
