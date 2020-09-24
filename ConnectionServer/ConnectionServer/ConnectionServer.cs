@@ -2,6 +2,7 @@
 using STDLib.JBVProtocol;
 using STDLib.JBVProtocol.Connections;
 using STDLib.JBVProtocol.IO;
+using STDLib.JBVProtocol.IO.CMD;
 using STDLib.Misc;
 using System;
 using System.Text;
@@ -11,8 +12,8 @@ namespace ConnectionServer
 {
     public class ConnectionServer
     {
-        readonly LeaseServer iDServer;
-        readonly Router router;
+        readonly LeaseServer leaseServer;
+        public readonly Router router;
         readonly TcpSocketListener listener;
 
 
@@ -25,7 +26,8 @@ namespace ConnectionServer
             DummyConnection con_Router_ID = new DummyConnection();
             DummyConnection.CoupleConnections(con_ID_Router, con_Router_ID);
 
-            iDServer = new LeaseServer(con_ID_Router);
+            leaseServer = new LeaseServer(con_ID_Router);
+            leaseServer.LeaseTimeout = Settings.LeaseTime;
 
             router = new Router();
             router.AddConnection(con_Router_ID);
@@ -47,5 +49,4 @@ namespace ConnectionServer
             Console.WriteLine("Client accepted");
         }
     }
-
 }

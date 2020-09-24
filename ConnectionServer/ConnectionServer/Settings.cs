@@ -7,5 +7,6 @@ namespace ConnectionServer
     {
         public static int  ListenerPort { get { return GetPar<int>(1000); } set { SetPar(value); } }
         public static string LogFile { get { return GetPar("/data/Log.txt"); } set { SetPar(value); } }
+        public static int LeaseTime { get { return GetPar<int>(600); } set { SetPar(value); } }
     }
 }
