@@ -15,7 +15,7 @@ namespace ConnectionServer
         {
             ConnectionServer server = new ConnectionServer();
 
-            JBVClient client = new JBVClient(SoftwareID.TestApp);
+            JBVClient client = new JBVClient();
 
             DummyConnection con1 = new DummyConnection();
             DummyConnection con2 = new DummyConnection();
@@ -28,9 +28,21 @@ namespace ConnectionServer
 
             Device.Client = client;
 
-            BaseCommand.Register("bla", ()=>{
-                var v = Device.GetDevices<STDLib.JBVProtocol.Devices.Router>(1000);
+            
+            BaseCommand.Register("Devices", ()=>{
+                var v = Device.GetDevices(1000);
+                foreach (Device d in v)
+                    Console.WriteLine($"{d.ID} \t{d.SoftwareID.ToString()}");
             });
+
+            BaseCommand.Register("LedOn", () => {
+                var v = Device.GetDevices<DPS50xx>(1000);
+                foreach (DPS50xx d in v)
+                    d.SetLED(true);
+                    
+            });
+
+
 
             BaseCommand.Do();
         }
