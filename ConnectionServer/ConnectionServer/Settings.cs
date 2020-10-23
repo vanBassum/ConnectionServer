@@ -1,7 +1,7 @@
 ﻿using STDLib.Saveable;
 using System;
 
-namespace ConnectionServer
+namespace ConServer
 {
     public sealed class Settings : BaseSettings<Settings>
     {
