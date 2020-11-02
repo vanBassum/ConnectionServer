@@ -1,9 +1,12 @@
 ﻿using STDLib.Commands;
 using STDLib.JBVProtocol;
 using STDLib.JBVProtocol.Commands;
+using STDLib.JBVProtocol.Devices;
+using STDLib.JBVProtocol.DSP50xx;
 using STDLib.JBVProtocol.DSP50xx.CMD;
 using System;
 using System.Linq;
+using System.Threading;
 
 namespace ConServer
 {
@@ -15,6 +18,9 @@ namespace ConServer
         {
             ConnectionServer server = new ConnectionServer();
 
+            Device.Init(server.Client);
+
+
             server.Client.CommandRecieved += HandleRecievedCommand;
 
             BaseCommand.Register("Devices", (args) =>
@@ -24,20 +30,10 @@ namespace ConServer
             });
 
 
-            BaseCommand.Register("SetLED", (args) =>
+            BaseCommand.Register("Boeh", (args) =>
             {
-                int devid;
-                int val;
-
-                if(int.TryParse(args[1], out devid) && int.TryParse(args[2], out val))
-                {
-                    SetLED cmd = new SetLED();
-                    cmd.RxID = (UInt16)devid;
-                    cmd.Led = val != 0;
-                    server.Client.SendCMD(cmd);
-                }
-
-
+                Device.OnDeviceFound += Device_OnDeviceFound;
+                Device.SearchDevices();
                 
             });
 
@@ -59,6 +55,15 @@ namespace ConServer
             */
 
             BaseCommand.Do();
+        }
+
+        private static void Device_OnDeviceFound(object sender, Device e)
+        {
+            Logger.LOGI($"Device found{e.GetType().Name}");
+            if(e is DPS50xx dev)
+            {
+                dev.SetLED(true);
+            }
         }
 
         private static void HandleRecievedCommand(object sender, Command e)
