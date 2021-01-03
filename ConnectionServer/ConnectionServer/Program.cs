@@ -1,11 +1,9 @@
 ﻿using STDLib.Commands;
 using STDLib.JBVProtocol;
-using STDLib.JBVProtocol.Commands;
-using STDLib.JBVProtocol.Devices;
-using STDLib.JBVProtocol.DSP50xx;
-using STDLib.JBVProtocol.DSP50xx.CMD;
+using STDLib.Misc;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace ConServer
@@ -16,28 +14,29 @@ namespace ConServer
 
         static void Main(string[] args)
         {
+            Settings.Load();
             ConnectionServer server = new ConnectionServer();
 
-            Device.Init(server.Client);
 
-
-            server.Client.CommandRecieved += HandleRecievedCommand;
+            server.Client.FrameRecieved += Client_FrameRecieved;
 
             BaseCommand.Register("Devices", (args) =>
             {
-                RequestSID cmd = new RequestSID();
-                server.Client.SendCMD(cmd);
+                Frame f = Frame.RequestSID(SoftwareID.Unknown);
+                server.Client.SendFrame(f);
             });
 
-
-            BaseCommand.Register("Boeh", (args) =>
+            
+            BaseCommand.Register("Log", (args) =>
             {
-                Device.OnDeviceFound += Device_OnDeviceFound;
-                Device.SearchDevices();
-                
+                Frame f = new Frame();
+                f.RxID = 1;
+                f.CommandID = (UInt32)LogHandler.CMDS.WriteLogString;
+                f.SetData(Encoding.ASCII.GetBytes("hallo"));
+                server.Client.SendFrame(f);
             });
-
-
+            
+            
 
             /*
             BaseCommand.Register("Devices", () => {
@@ -57,37 +56,29 @@ namespace ConServer
             BaseCommand.Do();
         }
 
-        private static void Device_OnDeviceFound(object sender, Device e)
+        private static void Client_FrameRecieved(object sender, Frame e)
         {
-            Logger.LOGI($"Device found{e.GetType().Name}");
-            if(e is DPS50xx dev)
+            switch ((CommandList)e.CommandID)
             {
-                dev.SetLED(true);
-            }
-        }
-
-        private static void HandleRecievedCommand(object sender, Command e)
-        {
-            switch (e)
-            {
-                case ReplySID cmd:
-                    LogRecievedCommand(cmd, $"{cmd.SID}");
-                    break;
-
-                default:
-                    LogRecievedCommand(e);
+                case CommandList.ReplySID:
+                    SoftwareID id = (SoftwareID)BitConverter.ToUInt32(e.Data, 0);
+                    LogRecievedCommand(e, id.ToString());
                     break;
             }
+
+
+
+            
         }
 
-        static void LogRecievedCommand(Command cmd, string message = "")
+        static void LogRecievedCommand(Frame cmd, string message = "")
         {
             if(message == "")
-                Logger.LOGI($"{cmd.TxID}, {cmd.GetType().Name}");
+                Logger.LOGI($"{cmd.TxID}");
             else
-                Logger.LOGI($"{cmd.TxID}, {cmd.GetType().Name}: {message}");
+                Logger.LOGI($"{cmd.TxID}: {message}");
         }
-
+        
     }
 
 }
