@@ -85,25 +85,28 @@ namespace ConServer
         {
             Guid key = new Guid(rx.Data);
             Lease lease = null;
-            if (leases.TryGetValue(key, out lease))
+            lock (leases)
             {
-                //Extend lease
-                lease.Expire = DateTime.Now.AddMinutes(10);
-            }
-            else
-            {
-                lease = new Lease();
-                lease.Expire = DateTime.Now.AddMinutes(10);
-                lease.Key = key;
+                if (leases.TryGetValue(key, out lease))
+                {
+                    //Extend lease
+                    lease.Expire = DateTime.Now.AddMinutes(10);
+                }
+                else
+                {
+                    lease = new Lease();
+                    lease.Expire = DateTime.Now.AddMinutes(10);
+                    lease.Key = key;
 
-                //TODO: Reuse expired leases.
-                //TODO: Optimize this!
-                UInt16 id = Settings.Items.LeaseStartID;
-                while (leases.Any(a => a.Value.ID == id))
-                    id++;
-                lease.ID = id;
+                    //TODO: Reuse expired leases.
+                    //TODO: Optimize this!
+                    UInt16 id = Settings.Items.LeaseStartID;
+                    while (leases.Any(a => a.Value.ID == id))
+                        id++;
+                    lease.ID = id;
 
-                leases[lease.Key] = lease;
+                    leases[lease.Key] = lease;
+                }
             }
             ReplyLease(lease);
             Logger.LOGI($"New lease accepted {lease.ToString()}");
