@@ -90,12 +90,12 @@ namespace ConServer
                 if (leases.TryGetValue(key, out lease))
                 {
                     //Extend lease
-                    lease.Expire = DateTime.Now.AddMinutes(10);
+                    lease.Expire = DateTime.Now.AddSeconds(Settings.Items.LeaseTime);
                 }
                 else
                 {
                     lease = new Lease();
-                    lease.Expire = DateTime.Now.AddMinutes(10);
+                    lease.Expire = DateTime.Now.AddSeconds(Settings.Items.LeaseTime);
                     lease.Key = key;
 
                     //TODO: Reuse expired leases.

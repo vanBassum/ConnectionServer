@@ -38,7 +38,7 @@ namespace ConServer
 
             listener = new TcpSocketListener();
             listener.OnClientAccept += (sender, client) => router.AddConnection(new TCPConnection(client));
-            listener.BeginListening(1001);
+            listener.BeginListening(Settings.Items.ListenerPort);
         }
     }
 }
